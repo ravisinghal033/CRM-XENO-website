@@ -2,9 +2,12 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
+import { getAuth } from "firebase/auth/web-extension";
+import { useAuth } from "../providers/authprovider";
 
 const Navbar = () => {
-  const [user, setUser] = useState<string | null>(null);
+  // const [user, setUser] = useState<string | null>(null);
+  const { user, setUser } = useAuth();
   const Logout = () => {
     localStorage.clear();
     window.location.reload();

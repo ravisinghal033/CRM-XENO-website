@@ -5,17 +5,20 @@ import { signInWithPopup } from "firebase/auth";
 import { Chrome } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/components/providers/authprovider";
 const Login = () => {
   const router = useRouter();
   const [value, setValue] = useState<string | null>(null);
+  const { setUser } = useAuth();
+
   const handleClick = async () => {
     try {
       const data = await signInWithPopup(auth, provider);
       const email = data.user.email;
       if (email) {
-        setValue(email);
+        setUser(email);
         localStorage.setItem("email", email);
-        window.location.href = "/";
+        router.push("/");
       } else {
         console.error("Email is null");
       }
