@@ -13,8 +13,12 @@ import { Label } from "@/components/ui/label";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 import { useState } from "react";
+import { useAuth } from "../providers/authprovider";
+import { ToastContainer, toast, Bounce } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const StartCampaign = () => {
+  const { user } = useAuth();
   const [name, setName] = useState<string | undefined>(undefined);
   const [details, setDetails] = useState<string | undefined>(undefined);
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,8 +28,34 @@ const StartCampaign = () => {
     setDetails(e.target.value);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    try {
+      const response = await fetch("http://localhost:8000/addcampaign", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: user,
+          name: name,
+          description: details,
+        }),
+      });
+      if (response.ok) {
+        toast.success("✨Campaign Launched!", {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+      }
+    } catch (error: unknown) {
+      console.log("Error", error);
+    }
   };
 
   return (

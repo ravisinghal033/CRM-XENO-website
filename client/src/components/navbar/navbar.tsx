@@ -2,7 +2,6 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import { getAuth } from "firebase/auth/web-extension";
 import { useAuth } from "../providers/authprovider";
 
 const Navbar = () => {
