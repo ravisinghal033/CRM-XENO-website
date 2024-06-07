@@ -19,12 +19,17 @@ const Navbar = () => {
         <div className="flex">
           <span></span>
           {user ? (
-            <Button
-              className="bg-white text-black flex gap-2 m-auto  hover:bg-white hover:bg-opacity-70"
-              onClick={Logout}
-            >
-              Logout
-            </Button>
+            <div className="flex gap-2">
+              <Button className="bg-white text-black flex gap-2 m-auto  hover:bg-white hover:bg-opacity-70 font-normal">
+                Add Campaigns
+              </Button>
+              <Button
+                className="bg-white text-black flex gap-2 m-auto  hover:bg-white hover:bg-opacity-70 font-normal"
+                onClick={Logout}
+              >
+                Logout
+              </Button>
+            </div>
           ) : (
             <Link href="/login">
               <Button className="bg-white text-black flex gap-2 m-auto  hover:bg-white hover:bg-opacity-70">
