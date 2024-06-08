@@ -16,8 +16,9 @@ import { useState } from "react";
 import { useAuth } from "../providers/authprovider";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Cross } from "lucide-react";
 
-const StartCampaign = () => {
+const StartShop = () => {
   const { user } = useAuth();
   const [name, setName] = useState<string | undefined>(undefined);
   const [details, setDetails] = useState<string | undefined>(undefined);
@@ -31,7 +32,7 @@ const StartCampaign = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:8000/addcampaign", {
+      const response = await fetch("http://localhost:8000/addshop", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -59,10 +60,12 @@ const StartCampaign = () => {
   };
 
   return (
-    <div className="md:text-3xl border-[0.5px] flex p-20 rounded-xl border-gray-600 cursor-pointer">
+    <div className="md:text-3xl  flex p-20 border-gray-600  bg-zinc-800 rounded-md border-[0.75px] bg-opacity-40 cursor-pointer">
       <Dialog>
-        <DialogTrigger className="m-auto">Start A Campaign</DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogTrigger className="flex items-center gap-2 m-auto">
+          <Cross className="text-green-200 md:w-6 w-4" /> Start A Shop
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px] ">
           <form onSubmit={handleSubmit}>
             <DialogHeader>
               <DialogTitle>Enter Details</DialogTitle>
@@ -74,7 +77,7 @@ const StartCampaign = () => {
             <div className="grid gap-4 py-4">
               <div className="items-center gap-4">
                 <Label htmlFor="name" className="text-right">
-                  Name of the campaign
+                  Name of the Shop
                 </Label>
                 <Input
                   id="name"
@@ -111,4 +114,4 @@ const StartCampaign = () => {
   );
 };
 
-export default StartCampaign;
+export default StartShop;
