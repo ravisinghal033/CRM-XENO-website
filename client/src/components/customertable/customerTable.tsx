@@ -1,31 +1,55 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import useFetchCustomerData from "@/hooks/fetchCustomerData";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface Item {
   id: string;
   label: string;
+  filterFn: (customer: any) => boolean;
 }
 
 const items: Item[] = [
   {
     id: "10000",
     label: "spends > INR 10000",
+    filterFn: (customer) => customer.spends > 10000,
   },
   {
     id: "3visits",
     label: "visits <= 3",
+    filterFn: (customer) => customer.visits <= 3,
   },
   {
     id: "3months",
-    label: "last visit > 3month",
+    label: "last visit > 3 months",
+    filterFn: (customer) => {
+      const threeMonthsAgo = new Date();
+      threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+      return new Date(customer.lastVisits) < threeMonthsAgo;
+    },
   },
 ];
 
 const CustomerTable = () => {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [filteredData, setFilteredData] = useState<any[]>([]);
   const { data, error, loading } = useFetchCustomerData();
+
+  useEffect(() => {
+    if (data) {
+      setFilteredData(data);
+    }
+  }, [data]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -35,9 +59,6 @@ const CustomerTable = () => {
     return <div>Error loading shop data.</div>;
   }
 
-  // if (!data || !Array.isArray(data.shopDetails)) {
-  //   return <div>No shop data available.</div>;
-  // }
   const handleCheckboxChange = (itemId: string, checked: boolean) => {
     if (checked) {
       setSelectedItems([...selectedItems, itemId]);
@@ -48,7 +69,16 @@ const CustomerTable = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle form submission here
+
+    let filtered = data;
+    selectedItems.forEach((itemId) => {
+      const filterItem = items.find((item) => item.id === itemId);
+      if (filterItem) {
+        filtered = filtered!.filter(filterItem.filterFn);
+      }
+    });
+
+    setFilteredData(filtered!);
   };
 
   return (
@@ -56,10 +86,10 @@ const CustomerTable = () => {
       <div className="text-xl mt-4">Customer Table</div>
       <form
         onSubmit={handleSubmit}
-        className="flex flex-wrap  items-center md:gap-4 gap-2 mt-2 pb-2"
+        className="flex flex-wrap items-center md:gap-4 gap-2 mt-2 pb-2"
       >
         <div className="">
-          <label className=" text-sm">Filters: </label>
+          <label className="text-sm">Filters: </label>
         </div>
         {items.map((item) => (
           <div
@@ -80,7 +110,32 @@ const CustomerTable = () => {
           Show
         </Button>
       </form>
-      <div className="text-sm">Total:</div>
+      <div className="text-sm pb-4">
+        No. of customers: {filteredData?.length}
+      </div>
+      <Table>
+        <TableCaption>A list of your recent Customers.</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Customer Name</TableHead>
+            <TableHead>Spends</TableHead>
+            <TableHead>Visits</TableHead>
+            <TableHead className="text-right">Last Visit</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {filteredData.map((customer, id) => (
+            <TableRow key={id}>
+              <TableCell className="font-medium">{customer.custName}</TableCell>
+              <TableCell>{customer.spends}</TableCell>
+              <TableCell>{customer.visits}</TableCell>
+              <TableCell className="text-right">
+                {customer.lastVisits}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </>
   );
 };

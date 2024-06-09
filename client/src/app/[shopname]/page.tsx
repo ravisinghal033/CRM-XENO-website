@@ -1,6 +1,7 @@
 "use client";
 import CustomerTable from "@/components/customertable/customerTable";
 import CustOrdComponent from "@/components/custordcomp/custordComp";
+import OrderTable from "@/components/ordertable/orderTable";
 import { Button } from "@/components/ui/button";
 import { useParams } from "next/navigation";
 const IndividualShop = () => {
@@ -14,6 +15,7 @@ const IndividualShop = () => {
         <CustOrdComponent />
       </div>
       <CustomerTable />
+      <OrderTable />
     </div>
   );
 };
