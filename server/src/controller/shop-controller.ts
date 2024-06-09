@@ -33,8 +33,14 @@ export const getShopData = async (request: any, response: any) => {
 
 export const getCustData = async (req: any, res: any) => {
   try {
-    const customers = await Customer.find();
-    res.status(200).json(customers);
+    const { shopName } = req.body;
+
+    const customers = await Customer.find({ shopName });
+    if (customers) {
+      res.status(200).json(customers);
+    } else {
+      res.status(401).json({ message: "No Customers" });
+    }
   } catch (error) {
     console.error("Error fetching customer data:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -43,8 +49,13 @@ export const getCustData = async (req: any, res: any) => {
 
 export const getAllOrderData = async (req: any, res: any) => {
   try {
-    const customers = await Order.find();
-    res.status(200).json(customers);
+    const { shopName } = req.body;
+    const order = await Order.find({ shopName });
+    if (order) {
+      res.status(200).json(order);
+    } else {
+      res.status(401).json({ message: "No Customers" });
+    }
   } catch (error) {
     console.error("Error fetching customer data:", error);
     res.status(500).json({ message: "Internal server error" });

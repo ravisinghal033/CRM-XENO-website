@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useParams } from "next/navigation";
 
 interface Item {
   id: string;
@@ -44,6 +45,8 @@ const CustomerTable = () => {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [filteredData, setFilteredData] = useState<any[]>([]);
   const { data, error, loading } = useFetchCustomerData();
+  const params = useParams<{ shopname: string }>();
+  const decodedItem = decodeURIComponent(params.shopname);
 
   useEffect(() => {
     if (data) {

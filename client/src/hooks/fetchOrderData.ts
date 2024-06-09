@@ -1,4 +1,5 @@
 "use client";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 type OrderDetails = {
@@ -17,12 +18,19 @@ const useFetchOrderData = (): FetchDataResponse => {
   const [data, setData] = useState<OrderDetails[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const params = useParams<{ shopname: string }>();
+  const shopName = decodeURIComponent(params.shopname);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch("http://localhost:8000/getAllOrderData", {
-          method: "GET",
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+
+          body: JSON.stringify({ shopName }),
         });
         if (!response.ok) {
           throw new Error("Failed to fetch data");

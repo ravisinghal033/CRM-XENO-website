@@ -19,8 +19,8 @@ let channel: any, connection;
 router.post("/addshop", addShop);
 router.post("/getshopdata", getShopData);
 // router.post("/getcustdata", getCustData);
-router.get("/getAllOrderData", getAllOrderData);
-router.get("/getAllCustomerData", getCustData);
+router.post("/getAllOrderData", getAllOrderData);
+router.post("/getAllCustomerData", getCustData);
 
 async function connectRabbitMQ() {
   try {
@@ -39,7 +39,8 @@ async function connectRabbitMQ() {
 connectRabbitMQ();
 
 router.post("/customer", async (req, res) => {
-  const { custName, custEmail, spends, visits, lastVisits } = req.body;
+  const { custName, custEmail, spends, visits, lastVisits, shopName } =
+    req.body;
 
   const customer = new Customer({
     custName,
@@ -47,6 +48,7 @@ router.post("/customer", async (req, res) => {
     spends,
     visits,
     lastVisits,
+    shopName,
   });
 
   try {
@@ -59,13 +61,14 @@ router.post("/customer", async (req, res) => {
 });
 
 router.post("/order", async (req, res) => {
-  const { orderName, orderEmail, amount, orderDate } = req.body;
+  const { orderName, orderEmail, amount, orderDate, shopName } = req.body;
 
   const order = new Order({
     orderName,
     orderEmail,
     amount,
     orderDate,
+    shopName,
   });
 
   try {

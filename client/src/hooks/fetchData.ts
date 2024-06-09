@@ -58,7 +58,7 @@ const useFetchShopData = (): FetchDataResponse => {
     };
 
     fetchData();
-  }, [notify]);
+  }, []);
 
   return { data, error, loading };
 };

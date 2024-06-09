@@ -6,6 +6,7 @@ const CustomerSchema = new mongoose.Schema({
   spends: { type: Number, required: true },
   visits: { type: Number, required: true },
   lastVisits: { type: Date },
+  shopName: { type: String, required: true },
 });
 
 const Customer = mongoose.model("Customer", CustomerSchema);

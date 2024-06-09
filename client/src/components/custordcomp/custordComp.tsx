@@ -10,9 +10,15 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useParams, useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 const CustOrdComponent = () => {
+  const router = useRouter();
+
+  const params = useParams<{ shopname: string }>();
+  const shopName = decodeURIComponent(params.shopname);
+
   // -------------customerState--------------//
   const [custName, setCustName] = useState("");
   const [custEmail, setCustEmail] = useState("");
@@ -28,16 +34,26 @@ const CustOrdComponent = () => {
 
   const handleCustomerSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const customerData = { custName, custEmail, spends, visits, lastVisits };
+    const customerData = {
+      custName,
+      custEmail,
+      spends,
+      visits,
+      lastVisits,
+      shopName,
+    };
     try {
-      await fetch("http://localhost:8000/customer", {
+      const response = await fetch("http://localhost:8000/customer", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(customerData),
       });
-      alert("Customer submitted");
+      if (response.ok) {
+        alert("Customer submitted");
+        router.push(`/${localStorage.getItem("email")}/campaign`);
+      }
     } catch (error) {
       console.error("Error submitting customer", error);
     }
@@ -45,7 +61,7 @@ const CustOrdComponent = () => {
 
   const handleOrderSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const orderData = { orderName, orderEmail, amount, orderDate };
+    const orderData = { orderName, orderEmail, amount, orderDate, shopName };
     try {
       const response = await fetch("http://localhost:8000/order", {
         method: "POST",
