@@ -47,14 +47,18 @@ const CustOrdComponent = () => {
     e.preventDefault();
     const orderData = { orderName, orderEmail, amount, orderDate };
     try {
-      await fetch("http://localhost:8000/order", {
+      const response = await fetch("http://localhost:8000/order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(orderData),
       });
-      alert("Order submitted");
+      if (response.ok) {
+        alert("Order submitted");
+      } else {
+        alert("Something went wrong");
+      }
     } catch (error) {
       console.error("Error submitting order", error);
     }
@@ -121,7 +125,7 @@ const CustOrdComponent = () => {
                   value={orderDate}
                   onChange={(e) => setOrderDate(e.target.value)}
                   className="text-black"
-                  placeholder="dd/mm/yy"
+                  placeholder="yyyy/mm/dd"
                 />
               </div>
             </div>
@@ -210,7 +214,7 @@ const CustOrdComponent = () => {
                   value={lastVisits}
                   onChange={(e) => setLastVisit(e.target.value)}
                   className="text-black"
-                  placeholder="dd/mm/yy"
+                  placeholder="yyyy/mm/dd"
                 />
               </div>
             </div>
