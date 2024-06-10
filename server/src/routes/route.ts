@@ -2,6 +2,7 @@ import express from "express";
 import {
   addShop,
   getAllOrderData,
+  getCampaignData,
   getCustData,
   getShopData,
 } from "../controller/shop-controller";
@@ -21,6 +22,7 @@ router.post("/getshopdata", getShopData);
 // router.post("/getcustdata", getCustData);
 router.post("/getAllOrderData", getAllOrderData);
 router.post("/getAllCustomerData", getCustData);
+router.get("/getAllCampaignData", getCampaignData);
 
 async function connectRabbitMQ() {
   try {
@@ -37,6 +39,8 @@ async function connectRabbitMQ() {
 }
 
 connectRabbitMQ();
+
+const QUEUE = "campaignQueue";
 
 router.post("/customer", async (req, res) => {
   const { custName, custEmail, spends, visits, lastVisits, shopName } =
@@ -58,6 +62,20 @@ router.post("/customer", async (req, res) => {
   } catch (error) {
     res.status(500).send("Error submitting customer");
   }
+});
+
+router.post("/sendCampaign", async (req, res) => {
+  const { customers } = req.body;
+
+  if (!customers || !Array.isArray(customers)) {
+    return res.status(400).send("Invalid input");
+  }
+
+  for (const customer of customers) {
+    await channel.sendToQueue(QUEUE, Buffer.from(JSON.stringify(customer)));
+  }
+
+  res.status(200).send("Campaign sent to queue");
 });
 
 router.post("/order", async (req, res) => {

@@ -6,7 +6,10 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "tsc": "tsc",
-    "start": "node ./dist/index.js",
+    "start:consumer": "ts-node ./src/consumer.ts",
+    "start:dummyVendorAPI": "ts-node ./src/dummyVendorAPI.ts",
+    "start:deliveryReceiptAPI": "ts-node ./src/deliveryReceiptAPI.ts",
+    "start:all": "concurrently \"npm run start:consumer\" \"npm run start:dummyVendorAPI\" \"npm run start:deliveryReceiptAPI\"",
     "test": "echo \"Error: no test specified\" && exit 1",
     "develop": "nodemon src/index.ts"
   },
@@ -15,6 +18,7 @@
   "license": "ISC",
   "dependencies": {
     "amqplib": "^0.10.4",
+    "axios": "^1.7.2",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

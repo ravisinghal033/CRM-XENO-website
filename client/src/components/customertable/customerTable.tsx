@@ -109,7 +109,10 @@ const CustomerTable = () => {
             <label className="font-normal">{item.label}</label>
           </div>
         ))}
-        <Button type="submit" className="p-3 h-8">
+        <Button
+          type="submit"
+          className="p-3 h-8 border-[0.5px] border-gray-700 hover:opacity-75"
+        >
           Show
         </Button>
       </form>

@@ -52,7 +52,7 @@ const CustOrdComponent = () => {
       });
       if (response.ok) {
         alert("Customer submitted");
-        router.push(`/${localStorage.getItem("email")}/campaign`);
+        router.push(`${shopName}/${localStorage.getItem("email")}/campaign`);
       }
     } catch (error) {
       console.error("Error submitting customer", error);
@@ -72,6 +72,7 @@ const CustOrdComponent = () => {
       });
       if (response.ok) {
         alert("Order submitted");
+        window.location.reload();
       } else {
         alert("Something went wrong");
       }
@@ -85,7 +86,9 @@ const CustOrdComponent = () => {
       <Dialog>
         <DialogTrigger asChild>
           <div className="flex items-center gap-2 m-auto cursor-pointer">
-            <Button>+Order</Button>
+            <Button variant="outline" className="text-black hover:opacity-75">
+              +Order
+            </Button>
           </div>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
@@ -160,7 +163,9 @@ const CustOrdComponent = () => {
       <Dialog>
         <DialogTrigger asChild>
           <div className="flex items-center gap-2 m-auto cursor-pointer">
-            <Button>+Customer</Button>
+            <Button variant="outline" className="text-black hover:opacity-75">
+              +Customer
+            </Button>
           </div>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">

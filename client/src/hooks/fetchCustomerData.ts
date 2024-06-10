@@ -2,7 +2,6 @@
 
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useNotificationCenter } from "react-toastify/addons/use-notification-center";
 
 type CustomerDetails = {
   custName: string;

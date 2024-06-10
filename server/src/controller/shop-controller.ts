@@ -1,6 +1,7 @@
 import Shop from "../model/shop-schema";
 import Customer from "../model/customer-schema";
 import Order from "../model/order-schema";
+import CommunicationLog from "../model/campaign-shema";
 
 export const addShop = async (request: any, response: any) => {
   try {
@@ -14,6 +15,20 @@ export const addShop = async (request: any, response: any) => {
     });
   } catch (error: unknown) {
     console.log("Error", error);
+  }
+};
+
+export const getCampaignData = async (request: any, response: any) => {
+  try {
+    const campaignData = await CommunicationLog.find();
+
+    if (campaignData) {
+      response.status(200).json(campaignData);
+    } else {
+      response.status(401).json({ message: "Nothing to log" });
+    }
+  } catch (error: any) {
+    response.status(500).json({ message: error.message });
   }
 };
 

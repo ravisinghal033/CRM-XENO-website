@@ -21,7 +21,7 @@ const OrderTable = () => {
     return <div>Error loading shop data.</div>;
   }
   return (
-    <div>
+    <div className="mb-10">
       <div className="text-xl mt-4">Order Table</div>
       <Table>
         <TableCaption>A list of your recent Orders.</TableCaption>
