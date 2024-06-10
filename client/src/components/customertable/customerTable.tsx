@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useParams } from "next/navigation";
 
 interface Item {
   id: string;
@@ -44,6 +45,8 @@ const CustomerTable = () => {
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [filteredData, setFilteredData] = useState<any[]>([]);
   const { data, error, loading } = useFetchCustomerData();
+  const params = useParams<{ shopname: string }>();
+  const decodedItem = decodeURIComponent(params.shopname);
 
   useEffect(() => {
     if (data) {
@@ -106,7 +109,10 @@ const CustomerTable = () => {
             <label className="font-normal">{item.label}</label>
           </div>
         ))}
-        <Button type="submit" className="p-3 h-8">
+        <Button
+          type="submit"
+          className="p-3 h-8 border-[0.5px] border-gray-700 hover:opacity-75"
+        >
           Show
         </Button>
       </form>

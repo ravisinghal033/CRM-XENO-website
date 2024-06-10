@@ -1,7 +1,7 @@
 "use client";
 
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useNotificationCenter } from "react-toastify/addons/use-notification-center";
 
 type CustomerDetails = {
   custName: string;
@@ -9,6 +9,7 @@ type CustomerDetails = {
   spends: number;
   visits: number;
   lastVisits: string;
+  shopName: string;
 };
 
 type FetchDataResponse = {
@@ -21,6 +22,8 @@ const useFetchCustomerData = (): FetchDataResponse => {
   const [data, setData] = useState<CustomerDetails[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const params = useParams<{ shopname: string }>();
+  const shopName = decodeURIComponent(params.shopname);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,7 +31,12 @@ const useFetchCustomerData = (): FetchDataResponse => {
         const response = await fetch(
           "http://localhost:8000/getAllCustomerData",
           {
-            method: "GET",
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+
+            body: JSON.stringify({ shopName }),
           },
         );
 

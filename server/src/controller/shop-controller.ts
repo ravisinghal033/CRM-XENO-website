@@ -1,6 +1,7 @@
 import Shop from "../model/shop-schema";
 import Customer from "../model/customer-schema";
 import Order from "../model/order-schema";
+import CommunicationLog from "../model/campaign-shema";
 
 export const addShop = async (request: any, response: any) => {
   try {
@@ -14,6 +15,20 @@ export const addShop = async (request: any, response: any) => {
     });
   } catch (error: unknown) {
     console.log("Error", error);
+  }
+};
+
+export const getCampaignData = async (request: any, response: any) => {
+  try {
+    const campaignData = await CommunicationLog.find();
+
+    if (campaignData) {
+      response.status(200).json(campaignData);
+    } else {
+      response.status(401).json({ message: "Nothing to log" });
+    }
+  } catch (error: any) {
+    response.status(500).json({ message: error.message });
   }
 };
 
@@ -33,8 +48,14 @@ export const getShopData = async (request: any, response: any) => {
 
 export const getCustData = async (req: any, res: any) => {
   try {
-    const customers = await Customer.find();
-    res.status(200).json(customers);
+    const { shopName } = req.body;
+
+    const customers = await Customer.find({ shopName });
+    if (customers) {
+      res.status(200).json(customers);
+    } else {
+      res.status(401).json({ message: "No Customers" });
+    }
   } catch (error) {
     console.error("Error fetching customer data:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -43,8 +64,13 @@ export const getCustData = async (req: any, res: any) => {
 
 export const getAllOrderData = async (req: any, res: any) => {
   try {
-    const customers = await Order.find();
-    res.status(200).json(customers);
+    const { shopName } = req.body;
+    const order = await Order.find({ shopName });
+    if (order) {
+      res.status(200).json(order);
+    } else {
+      res.status(401).json({ message: "No Customers" });
+    }
   } catch (error) {
     console.error("Error fetching customer data:", error);
     res.status(500).json({ message: "Internal server error" });

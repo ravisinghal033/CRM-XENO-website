@@ -17,14 +17,13 @@ const Navbar = () => {
   return (
     <div className=" sticky top-0 z-50 h-20 w-full items-center backdrop-blur shadow-sm px-2 flex justify-between bg-black bg-opacity-30">
       <div className="container md:p-0  2xl:w-[70%] m-auto  flex items-center justify-between">
-        <div className="text-3xl">CRM</div>
+        <Link href="/" className="text-3xl">
+          CRM
+        </Link>
         <div className="flex">
           <span></span>
           {user ? (
             <div className="flex gap-2">
-              <Button className="bg-white text-black flex gap-2 m-auto  hover:bg-white hover:bg-opacity-70 font-normal">
-                Add Campaigns
-              </Button>
               <Button
                 className="bg-white text-black flex gap-2 m-auto  hover:bg-white hover:bg-opacity-70 font-normal"
                 onClick={Logout}

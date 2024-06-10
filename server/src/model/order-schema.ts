@@ -5,6 +5,7 @@ const OrderSchema = new mongoose.Schema({
   orderEmail: { type: String, required: true },
   amount: { type: Number, required: true },
   orderDate: { type: Date, required: true },
+  shopName: { type: String, required: true },
 });
 
 const Order = mongoose.model("Order", OrderSchema);
