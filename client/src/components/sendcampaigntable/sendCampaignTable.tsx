@@ -124,7 +124,11 @@ const SendCampaignTable = () => {
                     <TableRow
                       key={row.id}
                       data-state={row.getIsSelected() && "selected"}
-                      className={row.getIsSelected() ? "bg-red-800" : ""}
+                      className={
+                        row.getIsSelected()
+                          ? "bg-gray-800 text-black bg-opacity-55"
+                          : ""
+                      }
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
