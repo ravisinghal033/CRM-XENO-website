@@ -82,8 +82,5 @@ Now, the application should be running, and you can access it in your web browse
 - **Firebase**: A platform for web and mobile development used here for authentication.
 - **RabbitMQ Cloud**: A cloud-based message broker for handling real-time updates and notifications.
 
-## Contributing
-Contributions are welcome! Please open an issue or submit a pull request with your improvements.
-
 ## License
 This project is made by Mangalam Raj
