@@ -1,6 +1,6 @@
-# Xeno Mini CRM
+#  Mini CRM
 
-Welcome to the Xeno Mini CRM project! This project is a demonstration of a basic Customer Relationship Management (CRM) application developed using the following technologies:
+Welcome to the  Mini CRM project! This project is a demonstration of a basic Customer Relationship Management (CRM) application developed using the following technologies:
 - Next.js
 - TypeScript
 - MongoDB Atlas
