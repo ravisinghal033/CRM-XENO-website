@@ -31,7 +31,6 @@ async function connectRabbitMQ() {
 
     // Create a unique, exclusive queue for this consumer
     const queue = await channel.assertQueue("", { exclusive: true });
-
     // Bind the queue to the exchange
     await channel.bindQueue(queue.queue, EXCHANGE, "");
 
@@ -45,7 +44,7 @@ async function connectRabbitMQ() {
         try {
           const customer: Customer = JSON.parse(msg.content.toString());
 
-          console.log(`Received message: ${msg.content.toString()}`);
+          // console.log(`Received message: ${msg.content.toString()}`);
 
           // Save to MongoDB
           const log = new CommunicationLog({
