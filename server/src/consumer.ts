@@ -1,113 +1,75 @@
 import express from "express";
 import amqp from "amqplib";
-import axios from "axios";
-import mongoose, { Document, Model } from "mongoose";
-import { Connection } from "./database/db";
-import CommunicationLog from "./model/campaign-shema";
+import mongoose from "mongoose";
+import CommunicationLog from "./model/campaign-shema"; // Update path if necessary
+import { Connection } from "./database/db"; // Update path if necessary
 
-// Define an interface for the CommunicationLog document
-interface ICommunicationLog extends Document {
-  _id: string; // Add _id property
-  custName: string;
-  custEmail: string;
-  status: "PENDING" | "SENT" | "FAILED";
-}
-
-// Define an interface for the CommunicationLog model
-interface ICommunicationLogModel extends Model<ICommunicationLog> {}
-
-// Define an interface for the customer object
+// Interface for Customer messages
 interface Customer {
   custName: string;
   custEmail: string;
 }
 
+// RabbitMQ and Batch Processing Configurations
 const RABBITMQ_URL =
   process.env.RABBITMQ_URL ||
-  "amqps://lbgyymhn:SV9-imIoV_108rlH_nLajN9pwQ-DSFml@rattlesnake.rmq.cloudamqp.com/lbgyymhn";
-const QUEUE = "campaignQueue";
+  "amqps://jhizuqgc:UV6QGCAZ5d6weQVZulabvWfpYbC1ubet@puffin.rmq2.cloudamqp.com/jhizuqgc";
+const BATCH_SIZE = 10;
 
-Connection();
+Connection(); // Connect to MongoDB
 
+// Function to initialize RabbitMQ Consumer
 async function connectRabbitMQ() {
-  const connection = await amqp.connect(RABBITMQ_URL);
-  const channel = await connection.createChannel();
-  await channel.assertQueue(QUEUE);
+  try {
+    const connection = await amqp.connect(RABBITMQ_URL);
+    const channel = await connection.createChannel();
 
-  // Constants for batch processing
-  const BATCH_SIZE = 2; // Number of messages to process in each batch
-  const BATCH_INTERVAL = 1000; // Interval in milliseconds to wait before processing a batch
+    const EXCHANGE = "campaignExchange";
 
-  // Buffer to hold incoming messages
-  let messageBuffer: amqp.Message[] = [];
+    // Assert the exchange
+    await channel.assertExchange(EXCHANGE, "fanout", { durable: false });
 
-  // Function to process a batch of messages
-  async function processBatch() {
-    try {
-      const batch = messageBuffer.splice(0, BATCH_SIZE);
-      if (batch.length === 0) return; // No messages to process
+    // Create a unique, exclusive queue for this consumer
+    const queue = await channel.assertQueue("", { exclusive: true });
 
-      // Process each message in the batch
-      for (const msg of batch) {
-        const customer: Customer = JSON.parse(msg.content.toString());
-        const CommunicationLog: ICommunicationLogModel = mongoose.model<
-          ICommunicationLog,
-          ICommunicationLogModel
-        >("CommunicationLog");
-        const log = new CommunicationLog({
-          custName: customer.custName,
-          custEmail: customer.custEmail,
-          status: "PENDING",
-        });
-        await log.save();
+    // Bind the queue to the exchange
+    await channel.bindQueue(queue.queue, EXCHANGE, "");
+
+    console.log(
+      `Consumer bound to exchange. Listening on queue: ${queue.queue}`
+    );
+
+    // Start consuming messages
+    channel.consume(queue.queue, async (msg) => {
+      if (msg) {
+        try {
+          const customer: Customer = JSON.parse(msg.content.toString());
+
+          console.log(`Received message: ${msg.content.toString()}`);
+
+          // Save to MongoDB
+          const log = new CommunicationLog({
+            custName: customer.custName,
+            custEmail: customer.custEmail,
+            status: "PENDING",
+          });
+          await log.save();
+
+          // Acknowledge the message
+          channel.ack(msg);
+        } catch (error) {
+          console.error("Error processing message:", error);
+          // Do not requeue in Pub/Sub, just log the error
+          channel.ack(msg); // Acknowledge even on failure to avoid infinite loops
+        }
       }
+    });
 
-      // Dummy vendor API call for the entire batch
-      await axios.post("http://localhost:3002/dummyVendorAPI/batch", {
-        messages: batch.map((msg) => JSON.parse(msg.content.toString())),
-      });
-
-      // Generate random status for the entire batch
-      const statuses: ("SENT" | "FAILED")[] = batch.map(() =>
-        Math.random() < 0.9 ? "SENT" : "FAILED",
-      );
-
-      // Update delivery receipt for each message in the batch
-      for (let i = 0; i < batch.length; i++) {
-        const logId = (await CommunicationLog.findOne().sort({ _id: -1 }))!._id; // Get the latest _id
-        await axios.post("http://localhost:3003/deliveryReceipt", {
-          logId,
-          status: statuses[i],
-        });
-      }
-    } catch (error) {
-      console.error("Error processing batch", error);
-    }
+    console.log("RabbitMQ consumer connected and awaiting messages.");
+  } catch (err) {
+    console.error("Failed to connect to RabbitMQ:", err);
   }
-
-  // Start processing batches at intervals
-  setInterval(processBatch, BATCH_INTERVAL);
-
-  channel.consume(QUEUE, async (msg: amqp.Message | null) => {
-    if (msg !== null) {
-      // Add message to the buffer
-      messageBuffer.push(msg);
-
-      // If buffer reaches batch size, process the batch immediately
-      if (messageBuffer.length >= BATCH_SIZE) {
-        await processBatch();
-      }
-
-      // Acknowledge message
-      channel.ack(msg);
-    }
-  });
 }
 
-connectRabbitMQ()
-  .then(() => {
-    console.log("RabbitMQ consumer connected");
-  })
-  .catch((err) => {
-    console.error("Failed to connect to RabbitMQ", err);
-  });
+// Start RabbitMQ Consumer
+connectRabbitMQ();

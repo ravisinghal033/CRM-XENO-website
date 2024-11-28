@@ -27,11 +27,11 @@ router.get("/getAllCampaignData", getCampaignData);
 async function connectRabbitMQ() {
   try {
     connection = await amqp.connect(
-      "amqps://lbgyymhn:SV9-imIoV_108rlH_nLajN9pwQ-DSFml@rattlesnake.rmq.cloudamqp.com/lbgyymhn",
+      "amqps://jhizuqgc:UV6QGCAZ5d6weQVZulabvWfpYbC1ubet@puffin.rmq2.cloudamqp.com/jhizuqgc"
     );
     channel = await connection.createChannel();
-    await channel.assertQueue("orders");
-    await channel.assertQueue("customers");
+    await channel.assertQueue("campaignQueue");
+
     console.log("Connected to RabbitMQ");
   } catch (error) {
     console.error("Failed to connect to RabbitMQ", error);
@@ -57,7 +57,6 @@ router.post("/customer", async (req, res) => {
 
   try {
     await customer.save();
-    channel.sendToQueue("customers", Buffer.from(JSON.stringify(req.body)));
     res.status(201).send("Customer submitted and saved to DB");
   } catch (error) {
     res.status(500).send("Error submitting customer");
@@ -71,11 +70,23 @@ router.post("/sendCampaign", async (req, res) => {
     return res.status(400).send("Invalid input");
   }
 
-  for (const customer of customers) {
-    await channel.sendToQueue(QUEUE, Buffer.from(JSON.stringify(customer)));
-  }
+  try {
+    // Assert a fanout exchange for Pub/Sub
+    const EXCHANGE = "campaignExchange";
+    await channel.assertExchange(EXCHANGE, "fanout", { durable: false });
 
-  res.status(200).send("Campaign sent to queue");
+    // Publish each customer message to the exchange
+    for (const customer of customers) {
+      const message = JSON.stringify(customer);
+      await channel.publish(EXCHANGE, "", Buffer.from(message));
+      console.log(`Message published: ${message}`);
+    }
+
+    res.status(200).send("Campaign messages sent to exchange");
+  } catch (error) {
+    console.error("Error publishing to exchange:", error);
+    res.status(500).send("Failed to send campaign messages");
+  }
 });
 
 router.post("/order", async (req, res) => {
@@ -91,7 +102,6 @@ router.post("/order", async (req, res) => {
 
   try {
     await order.save();
-    channel.sendToQueue("orders", Buffer.from(JSON.stringify(req.body)));
     res.status(201).send("Order submitted and saved to DB");
   } catch (error) {
     res.status(500).send("Error submitting order");
