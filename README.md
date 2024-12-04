@@ -5,7 +5,7 @@ Welcome to the  Mini CRM project! This project is a demonstration of a basic Cus
 - TypeScript
 - MongoDB Atlas
 - Firebase (Authentication)
-- RabbitMQ Cloud
+- RabbitMQ Cloud (PubSub)
 - Express.js
 - ShadCN
 - TailwindCSS
