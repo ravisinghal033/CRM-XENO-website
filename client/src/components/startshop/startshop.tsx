@@ -62,10 +62,12 @@ const StartShop = () => {
   };
 
   return (
-    <div className="md:text-3xl  flex p-20 border-gray-600  bg-zinc-800 rounded-md border-[0.75px] bg-opacity-40 cursor-pointer">
+    <div className="md:text-3xl  flex p-20  bg-zinc-800 rounded-md border-[0.75px] bg-opacity-40 cursor-pointer">
       <Dialog>
         <DialogTrigger className="flex items-center gap-2 m-auto">
-          <Cross className="text-green-200 md:w-6 w-4" /> Start A Shop
+          <Cross className="text-green-200 md:w-6 w-4" /> Create Your Online Shop
+
+
         </DialogTrigger>
         {user ? (
           <DialogContent className="sm:max-w-[425px] ">

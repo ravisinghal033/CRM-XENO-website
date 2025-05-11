@@ -10,6 +10,8 @@
     "start:dummyVendorAPI": "ts-node ./src/dummyVendorAPI.ts",
     "start:deliveryReceiptAPI": "ts-node ./src/deliveryReceiptAPI.ts",
     "start:all": "concurrently \"npm run start:consumer\" \"npm run start:dummyVendorAPI\" \"npm run start:deliveryReceiptAPI\"",
+    "start": "ts-node src/index.ts",
+
     "test": "echo \"Error: no test specified\" && exit 1",
     "develop": "nodemon src/index.ts"
   },

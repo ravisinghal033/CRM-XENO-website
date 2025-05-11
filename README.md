@@ -83,4 +83,4 @@ Now, the application should be running, and you can access it in your web browse
 - **RabbitMQ Cloud**: A cloud-based message broker for handling real-time updates and notifications.
 
 ## License
-This project is made by Mangalam Raj
+This project is made by Ravi Singhal
