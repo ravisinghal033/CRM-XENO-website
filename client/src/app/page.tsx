@@ -8,7 +8,7 @@ export default function Home() {
     <main className="container pt-10">
       <div>
         <Startshop />
-        <div className="mt-10 text-xl font-medium"> Campaigns</div>
+        <div className="mt-10 text-xl font-medium"> Latest Campaigns</div>
         <ShopCardSection />
       </div>
     </main>
