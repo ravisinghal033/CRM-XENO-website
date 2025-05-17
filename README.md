@@ -1,5 +1,6 @@
 #  Mini CRM
 
+
 Welcome to the  Mini CRM project! This project is a demonstration of a basic Customer Relationship Management (CRM) application developed using the following technologies:
 - Next.js
 - TypeScript
